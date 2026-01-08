@@ -34,6 +34,10 @@ const profileSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    image: {
+      type: String,
+      default: "uploads/avatar.png"
+    },
     otp: {
       type: String,
       default: null,

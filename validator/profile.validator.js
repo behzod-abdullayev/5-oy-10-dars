@@ -35,9 +35,9 @@ const updateProfileValidator = Joi.object({
       otherwise: Joi.optional(),
     })
     .messages({
-      "any.required":
-        "Diqqat! Emailingizni o'zgartirish uchun amaldagi parolingizni kiritishingiz shart!",
+      "any.required": "parolingizni kiritishingiz shart",
     }),
+  image: Joi.string().optional().allow(null, ""), 
 });
 
 module.exports = {

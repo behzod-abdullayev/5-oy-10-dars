@@ -16,6 +16,7 @@ const getMe = async (req, res, next) => {
   }
 };
 
+
 // 2. Update Profile
 const updateProfile = async (req, res, next) => {
   try {
@@ -26,9 +27,12 @@ const updateProfile = async (req, res, next) => {
     const user = await Profile.findById(req.user.id);
     if (!user) return next(CustomErrorHandler.NotFound("Foydalanuvchi topilmadi"));
 
+    if (req.file) {
+      user.image = req.file.path.replace(/\\/g, "/");
+    }
+
     let emailChanged = false;
 
-    //
     if (email && email !== user.email) {
       if (!password) return next(CustomErrorHandler.BadRequest("Emailni o'zgartirish uchun parolni kiriting"));
 
@@ -48,7 +52,6 @@ const updateProfile = async (req, res, next) => {
       emailChanged = true;
     }
 
-    // Username o'zgartirish mantiqi
     if (username) {
       const usernameExist = await Profile.findOne({ username, _id: { $ne: req.user.id } });
       if (usernameExist) return next(CustomErrorHandler.conflict("Bu username band"));
@@ -62,13 +65,18 @@ const updateProfile = async (req, res, next) => {
       message: emailChanged 
         ? "Yangi emailingizga tasdiqlash kodi yuborildi" 
         : "Profil muvaffaqiyatli yangilandi",
-      data: { username: user.username, email: user.email }
+      data: { 
+        username: user.username, 
+        email: user.email,
+        image: user.image 
+      }
     });
 
   } catch (error) {
     next(error);
   }
 };
+
 
 // 3. Change Password
 const changePassword = async (req, res, next) => {
