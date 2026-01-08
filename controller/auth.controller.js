@@ -195,8 +195,9 @@ const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
-// resend otp
 
+
+//6. resend otp
 const resendOtp = async (req, res, next) => {
   try {
    const {error, value} = resendOtpValidator.validate(req.body)

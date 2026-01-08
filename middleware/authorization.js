@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const CustomErrorHandler = require("../utils/custom-error-handler");
 
-// Tokenni tekshirish va req.user ni to'ldirish
+// verify token
 const verifyToken = (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
@@ -12,7 +12,7 @@ const verifyToken = (req, res, next) => {
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-        req.user = decoded; // { id: user._id, role: user.role }
+        req.user = decoded;
         next();
     } catch (error) {
         if (error.name === "TokenExpiredError") {
@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-// Adminlikni tekshirish
+// isAdmin
 const isAdmin = (req, res, next) => {
     if (req.user && req.user.role === "admin") {
         next();
