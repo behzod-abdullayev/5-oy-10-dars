@@ -22,13 +22,13 @@ const updateProfile = async (req, res, next) => {
     const { error, value } = updateProfileValidator.validate(req.body);
     if (error) return next(CustomErrorHandler.BadRequest(error.details[0].message));
 
-    const { username, email, password } = value;
+    const { username, email, password } = value; 
     const user = await Profile.findById(req.user.id);
     if (!user) return next(CustomErrorHandler.NotFound("Foydalanuvchi topilmadi"));
 
     let emailChanged = false;
 
-    // Emailni o'zgartirish mantiqi
+    //
     if (email && email !== user.email) {
       if (!password) return next(CustomErrorHandler.BadRequest("Emailni o'zgartirish uchun parolni kiriting"));
 

@@ -101,10 +101,23 @@ const resetPasswordValidator = Joi.object({
   }),
 });
 
+const resendOtpValidator = Joi.object({
+  email: Joi.string()
+  .email()
+  .trim()
+  .lowercase()
+  .required()
+  .messages({
+    "string.email": "noto'g'ri email formati",
+    "any.required": "email kiritilihi shart"
+  })
+})
+
 module.exports = {
   registerValidator,
   verifyValidator,
   loginValidator,
   forgotPasswordValidator,
   resetPasswordValidator,
+  resendOtpValidator
 };

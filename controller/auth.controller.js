@@ -8,6 +8,7 @@ const {
   loginValidator,
   forgotPasswordValidator,
   resetPasswordValidator,
+  resendOtpValidator,
 } = require("../validator/auth.validator");
 
 const { tokenGenerator, refreshToken } = require("../utils/token-generator");
@@ -52,7 +53,6 @@ const register = async (req, res, next) => {
   }
 };
 
-
 const verify = async (req, res, next) => {
   try {
     const { error, value } = verifyValidator.validate(req.body);
@@ -61,7 +61,6 @@ const verify = async (req, res, next) => {
 
     const { email, otp } = value;
 
-
     const user = await Profile.findOne({
       $or: [{ email: email }, { tempEmail: email }],
     });
@@ -69,7 +68,6 @@ const verify = async (req, res, next) => {
     if (!user)
       return next(CustomErrorHandler.NotFound("Foydalanuvchi topilmadi"));
 
-    // Kod va vaqt tekshiruvi
     if (user.otp !== otp)
       return next(CustomErrorHandler.BadRequest("Noto'g'ri kod kiritildi"));
     if (Date.now() > user.otpTime)
@@ -197,6 +195,42 @@ const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+// resend otp
+
+const resendOtp = async (req, res, next) => {
+  try {
+   const {error, value} = resendOtpValidator.validate(req.body)
+   if(error) {
+    return next(CustomErrorHandler.BadRequest(error.details[0].message))
+   }
+   const {email} = value
+   
+    const user = await Profile.findOne({ email });
+
+    if (!user) {
+      return next(CustomErrorHandler.NotFound("foydalanuvchi topilmadi"));
+    }
+
+    if (user.isVerified) {
+      return next(
+        CustomErrorHandler.BadRequest("bu foydalanuvchi ro'yxatdan o'tgan")
+      );
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otp = code;
+    user.otpTime = Date.now() + 1000 * 60 * 5;
+    await user.save();
+    await sendMessage(email, `tasdiqlash kodi: ${code}`);
+
+    res.status(200).json({
+      succes: true,
+      message: "tasdiqlash kodi emailingizga yuborildi",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   register,
@@ -204,4 +238,5 @@ module.exports = {
   login,
   forgotPassword,
   resetPassword,
+  resendOtp,
 };

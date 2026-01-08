@@ -22,11 +22,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Database ulanish
 connectDB();
 
-// Yo'nalishlar
-app.use("/api/auth", authRouter);
-app.use("/api/profile", profileRouter);
+app.use( authRouter);
+app.use(profileRouter);
 
-// Global Error Handler (Hamma xatolarni tutadi)
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;

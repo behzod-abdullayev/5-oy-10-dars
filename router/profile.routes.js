@@ -9,4 +9,4 @@ profileRouter.put("/update_accaunt", verifyToken, updateProfile);
 profileRouter.post("/change_password", verifyToken, changePassword);
 profileRouter.delete("/delete_accaunt", verifyToken, deleteAccaunt);
 
-module.exports = profileRouter;
+module.exports = profileRouter; 
